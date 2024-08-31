@@ -1,5 +1,6 @@
 using BlazorComponent.Components;
 using BlazorComponent.Repositories;
+using BlazorComponent.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
-
+builder.Services.AddScoped<MedicoRepository, MedicoRepository>();
+builder.Services.AddScoped<MedicoService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,0 +1,64 @@
+﻿@page "/medicos/create"
+@page "/medicos/edit/{Id:int}"
+@rendermode InteractiveServer
+@using BlazorComponent.Components.Pages.Headers
+@inject MedicoService _medicoService
+@inject NavigationManager _navigation
+
+<CustomHeader>@(IsEdit ? "Editar Médico" : "Novo Médico")</CustomHeader>
+
+<EditForm Model="Model" OnValidSubmit="OnSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="Nome" class="form-label">Nome</label>
+        <InputText id="Nome" class="form-control" @bind-Value="Model.Name" />
+        <ValidationMessage For="@(() => Model.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="CRM" class="form-label">CRM</label>
+        <InputText id="CRM" class="form-control" @bind-Value="Model.CRM" />
+        <ValidationMessage For="@(() => Model.CRM)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    public Medico Model { get; set; } = new Medico();
+    private bool IsEdit => Id.HasValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEdit)
+        {
+            if (Id.Value == null) return;
+
+            var medico = await _medicoService.GetMedicoByIdAsync(Id.Value);
+            if (medico != null)
+            {
+                Model = medico;
+            }
+            else
+            {
+                _navigation.NavigateTo("/medicos");
+            }
+        }
+    }
+
+    private async Task OnSubmit()
+    {
+        if (IsEdit)
+        {
+            await _medicoService.UpdateMedicoAsync(Model.Id, Model);
+        }
+        else
+        {
+            await _medicoService.AddMedicoAsync(Model);
+        }
+        _navigation.NavigateTo("/medicos");
+    }
+}

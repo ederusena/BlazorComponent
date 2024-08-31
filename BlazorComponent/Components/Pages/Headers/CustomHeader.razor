@@ -1,0 +1,17 @@
+﻿@if(ChildContent is null)
+{
+    <div class="alert alert-info" role="alert">
+        Cabeçalho não definido!
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        @ChildContent
+    </div>
+}
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

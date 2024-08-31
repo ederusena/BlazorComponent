@@ -1,8 +1,14 @@
 ﻿@page "/medicos"
-@inject IMedicoRepository _medicoRepository
 @rendermode InteractiveServer
 
-<h3>Médicos</h3>
+@using BlazorComponent.Components.Pages.Headers
+@inject MedicoService _medicoService
+@inject NavigationManager _navigation
+
+<CustomHeader>
+    Listagem de Médicos
+</CustomHeader>
+<button class="btn btn-primary" @onclick="() => NovoMedico()">Novo Médico</button>
 
 <table class="table table-striped">
     <thead>
@@ -10,24 +16,49 @@
             <th>ID</th>
             <th>Nome</th>
             <th>CRM</th>
-            <th>#</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-        <MedicoIemList Medicos="@Medicos" OnDelete="Deletar"/>
+        @if (Medicos != null)
+        {
+            @foreach (var medico in Medicos)
+            {
+                <tr>
+                    <td>@medico.Id</td>
+                    <td>@medico.Name</td>
+                    <td>@medico.CRM</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditarMedico(medico.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => ExcluirMedico(medico.Id)">Excluir</button>
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
 </table>
 
 @code {
-    public List<Medico>? Medicos;
+    private List<Medico>? Medicos;
 
     protected override async Task OnInitializedAsync()
     {
-        Medicos = await _medicoRepository.GetAllAsync();
+        Medicos = await _medicoService.GetAllMedicosAsync();
     }
 
-    public void Deletar(Medico medico)
+    private void NovoMedico()
     {
-        Medicos?.Remove(medico);
+        _navigation.NavigateTo("/medicos/create");
+    }
+
+    private void EditarMedico(int id)
+    {
+        _navigation.NavigateTo($"/medicos/edit/{id}");
+    }
+
+    private async Task ExcluirMedico(int id)
+    {
+        await _medicoService.RemoveMedicoAsync(id);
+        Medicos = await _medicoService.GetAllMedicosAsync();
     }
 }

@@ -2,19 +2,44 @@
 
 namespace BlazorComponent.Repositories
 {
-    public class MedicoRepository : IMedicoRepository
+    public class MedicoRepository : IRepository<Medico>
     {
-        public async Task<List<Medico>> GetAllAsync()
+        private readonly List<Medico> _medicos = new();
+
+        public Task AddAsync(Medico entity)
         {
-           return new List<Medico>
-           {
-               new Medico { Id = 1, Name = "Dr. John Doe", CRM = 123456 },
-               new Medico { Id = 2, Name = "Dr. Jane Doe", CRM = 654321 },
-               new Medico { Id = 3, Name = "Dr. John Smith", CRM = 987654 },
-               new Medico { Id = 4, Name = "Dr. Jane Smith", CRM = 456789 },
-               new Medico { Id = 5, Name = "Dr. John Johnson", CRM = 321654 },
-               new Medico { Id = 6, Name = "Dr. Jane Johnson", CRM = 789123 }
-           };
+            _medicos.Add(entity);
+            return Task.CompletedTask;
+        }
+
+        public Task<List<Medico>> GetAllAsync()
+        {
+            return Task.FromResult(_medicos.ToList());
+        }
+
+        public Task<Medico?> GetByIdAsync(int id)
+        {
+            return Task.FromResult(_medicos.FirstOrDefault(x => x.Id == id));
+        }
+
+        public Task RemoveAsync(int id)
+        {
+            var medico = _medicos.FirstOrDefault(x => x.Id == id);
+            if (medico != null)
+            {
+                _medicos.Remove(medico);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateAsync(Medico medico)
+        {
+            var existingMedico = _medicos.FirstOrDefault(x => x.Id == medico.Id);
+            if (existingMedico != null)
+            {
+                existingMedico.Update(medico.Name, medico.CRM);
+            }
+            return Task.CompletedTask;
         }
     }
 }
