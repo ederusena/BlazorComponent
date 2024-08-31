@@ -1,20 +1,14 @@
-﻿@page "/medicos/create"
+﻿@page "/medicos/edit/{Id:int}"
 @rendermode InteractiveServer
 @using BlazorComponent.Components.Pages.Headers
 @inject MedicoService _medicoService
 @inject NavigationManager _navigation
 
-<CustomHeader>Novo Médico</CustomHeader>
+<CustomHeader>Editar Médico</CustomHeader>
 
 <EditForm Model="Model" OnValidSubmit="OnSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
-
-    <div class="mb-3">
-        <label for="ID" class="form-label">ID</label>
-        <InputNumber id="ID" class="form-control" @bind-Value="Model.Id" />
-        <ValidationMessage For="@(() => Model.Id)" />
-    </div>
 
     <div class="mb-3">
         <label for="Nome" class="form-label">Nome</label>
@@ -32,11 +26,15 @@
 </EditForm>
 
 @code {
+    [Parameter]
+    public int? Id { get; set; }
+    
     public Medico Model { get; set; } = new Medico();
+    private bool IsEdit => Id.HasValue;
 
     private async Task OnSubmit()
     {
-       await _medicoService.AddMedicoAsync(Model);
-       _navigation.NavigateTo("/medicos");
+        await _medicoService.UpdateMedicoAsync(Model.Id, Model);
+        _navigation.NavigateTo("/medicos");
     }
 }
