@@ -1,0 +1,72 @@
+﻿@page "/books"
+@rendermode InteractiveServer
+@using BlazorComponent.Components.Pages.Headers
+@inject BookService _bookService
+@inject NavigationManager _navigation
+
+<CustomHeader>Listagem de Livros</CustomHeader>
+
+<button class="btn btn-primary" @onclick="() => NovoBook()">Novo Livro</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Autor</th>
+            <th>ISBN</th>
+            <th>Data de Lançamento</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Books != null)
+        {
+            @foreach (var book in Books)
+            {
+                <tr>
+                    <td>@book.Id</td>
+                    <td>@book.Name</td>
+                    <td>@book.Author</td>
+                    <td>@book.ISBN</td>
+                    <td>@book.ReleaseDate.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditBook(book.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => RemoveBook(book.Id)">Excluir</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">Nenhum livro cadastrado</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Book>? Books;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Books = await _bookService.GetAllBooksAsync();
+    }
+
+    private void NovoBook()
+    {
+        _navigation.NavigateTo("/books/create");
+    }
+
+    private void EditBook(int id)
+    {
+        _navigation.NavigateTo($"/books/edit/{id}");
+    }
+
+    private async Task RemoveBook(int id)
+    {
+        await _bookService.RemoveBookAsync(id);
+        Books = await _bookService.GetAllBooksAsync();
+    }
+}

@@ -5,9 +5,11 @@ namespace BlazorComponent.Repositories
     public class MedicoRepository : IRepository<Medico>
     {
         private readonly List<Medico> _medicos = new();
+        private int _nextId = 1;
 
         public Task AddAsync(Medico entity)
         {
+            entity.Id = _nextId++;
             _medicos.Add(entity);
             return Task.CompletedTask;
         }

@@ -12,13 +12,12 @@ namespace BlazorComponent.Services
             _medicoRepository = medicoRepository;
         }
 
-        public async Task AddMedicoAsync(Medico medico)
+         public async Task AddMedicoAsync(Medico medico)
         {
             if (string.IsNullOrEmpty(medico.Name) || string.IsNullOrEmpty(medico.CRM))
             {
                 throw new Exception("Todos os campos são obrigatórios");
             }
-
             await _medicoRepository.AddAsync(medico);
         }
 

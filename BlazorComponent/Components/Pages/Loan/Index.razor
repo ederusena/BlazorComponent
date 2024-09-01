@@ -1,0 +1,72 @@
+﻿@page "/loans"
+@rendermode InteractiveServer
+@using BlazorComponent.Components.Pages.Headers
+@inject LoanService _loanService
+@inject NavigationManager _navigation
+
+<CustomHeader>Listagem de Empréstimos</CustomHeader>
+
+<button class="btn btn-primary" @onclick="() => NovoEmprestimo()">Novo Empréstimo</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuário</th>
+            <th>Livro</th>
+            <th>Data de Empréstimo</th>
+            <th>Data de Devolução</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Loans != null)
+        {
+            @foreach (var loan in Loans)
+            {
+                <tr>
+                    <td>@loan.Id</td>
+                    <td>@(loan.User?.Name ?? "N/A")</td>
+                    <td>@(loan.Book?.Name ?? "N/A")</td>
+                    <td>@loan.LoanDate.ToShortDateString()</td>
+                    <td>@loan.DueDate.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditLoan(loan.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => RemoveLoan(loan.Id)">Excluir</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">Nenhum empréstimo cadastrado</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Loan>? Loans;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Loans = await _loanService.GetAllLoansAsync();
+    }
+
+    private void EditLoan(int id)
+    {
+        _navigation.NavigateTo($"/loans/edit/{id}");
+    }
+
+    private void NovoEmprestimo()
+    {
+        _navigation.NavigateTo("/loans/create");
+    }
+
+    private async Task RemoveLoan(int id)
+    {
+        await _loanService.RemoveLoanAsync(id);
+        Loans = await _loanService.GetAllLoansAsync();
+    }
+}

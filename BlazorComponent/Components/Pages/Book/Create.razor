@@ -1,0 +1,54 @@
+﻿@page "/books/create"
+@rendermode InteractiveServer
+@using BlazorComponent.Components.Pages.Headers
+@inject BookService _bookService
+@inject NavigationManager _navigation
+
+<CustomHeader>Novo Livro</CustomHeader>
+
+<EditForm Model="@NewBook" OnValidSubmit="CreateBook">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="Name" class="form-label">Nome</label>
+        <InputText id="Name" class="form-control" @bind-Value="NewBook.Name" />
+        <ValidationMessage For="@(() => NewBook.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Author" class="form-label">Autor</label>
+        <InputText id="Author" class="form-control" @bind-Value="NewBook.Author" />
+        <ValidationMessage For="@(() => NewBook.Author)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="ISBN" class="form-label">ISBN</label>
+        <InputText id="ISBN" class="form-control" @bind-Value="NewBook.ISBN" />
+        <ValidationMessage For="@(() => NewBook.ISBN)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="ReleaseDate" class="form-label">Data de Lançamento</label>
+        <InputDate id="ReleaseDate" class="form-control" @bind-Value="NewBook.ReleaseDate" />
+        <ValidationMessage For="@(() => NewBook.ReleaseDate)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Criar Livro</button>
+    <button type="button" class="btn btn-secondary" @onclick="CancelCreate">Cancelar</button>
+</EditForm>
+
+@code {
+    private Book NewBook { get; set; } = new Book { ReleaseDate = DateTime.Today };
+
+    private async Task CreateBook()
+    {
+        await _bookService.AddBookAsync(NewBook);
+        _navigation.NavigateTo("/books");
+    }
+
+    private void CancelCreate()
+    {
+        _navigation.NavigateTo("/books");
+    }
+}

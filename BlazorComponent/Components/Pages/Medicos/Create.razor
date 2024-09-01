@@ -10,21 +10,21 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div class="mb-3">
+    @* <div class="mb-3">
         <label for="ID" class="form-label">ID</label>
-        <InputNumber id="ID" class="form-control" @bind-Value="Model.Id" />
+        <InputNumber id="ID" class="form-control" @bind-Value="Model.Id" placeholder="Digite o id" />
         <ValidationMessage For="@(() => Model.Id)" />
-    </div>
+    </div> *@
 
     <div class="mb-3">
         <label for="Nome" class="form-label">Nome</label>
-        <InputText id="Nome" class="form-control" @bind-Value="Model.Name" />
+        <InputText id="Nome" class="form-control" @bind-Value="Model.Name" placeholder="Digite o Nome" />
         <ValidationMessage For="@(() => Model.Name)" />
     </div>
 
     <div class="mb-3">
         <label for="CRM" class="form-label">CRM</label>
-        <InputText id="CRM" class="form-control" @bind-Value="Model.CRM" />
+        <InputText id="CRM" class="form-control" @bind-Value="Model.CRM" placeholder="Digite o CRM"/>
         <ValidationMessage For="@(() => Model.CRM)" />
     </div>
 
@@ -36,7 +36,7 @@
 
     private async Task OnSubmit()
     {
-       await _medicoService.AddMedicoAsync(Model);
-       _navigation.NavigateTo("/medicos");
+        await _medicoService.AddMedicoAsync(Model);
+        _navigation.NavigateTo("/medicos");
     }
 }

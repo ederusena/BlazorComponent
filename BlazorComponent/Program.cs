@@ -8,8 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped<MedicoRepository, MedicoRepository>();
+builder.Services.AddScoped<MedicoRepository>();
 builder.Services.AddScoped<MedicoService>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<BookRepository>();
+builder.Services.AddScoped<LoanRepository>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<BookService>();
+builder.Services.AddScoped<LoanService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

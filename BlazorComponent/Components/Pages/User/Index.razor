@@ -1,0 +1,69 @@
+﻿@page "/users"
+@rendermode InteractiveServer
+
+@using BlazorComponent.Components.Pages.Headers
+@inject UserService _userService
+@inject NavigationManager _navigation
+
+<CustomHeader>Listagem de Usuários</CustomHeader>
+
+<button class="btn btn-primary" @onclick="() => NovoUsuario()">Novo Usuário</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Users != null)
+        {
+            @foreach (var user in Users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditarUsuario(user.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => RemoveUser(user.Id)">Excluir</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">Nenhum usuário cadastrado</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<User>? Users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await _userService.GetAllUsersAsync();
+    }
+
+    private void NovoUsuario()
+    {
+        _navigation.NavigateTo("/users/create");
+    }
+
+    private void EditarUsuario(int id)
+    {
+        _navigation.NavigateTo($"/users/edit/{id}");
+    }
+
+    private async Task RemoveUser(int id)
+    {
+        await _userService.RemoveUserAsync(id);
+        Users = await _userService.GetAllUsersAsync();
+    }
+}

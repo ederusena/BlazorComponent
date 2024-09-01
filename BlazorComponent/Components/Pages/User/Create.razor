@@ -1,0 +1,42 @@
+﻿@page "/users/create"
+@rendermode InteractiveServer
+@using BlazorComponent.Components.Pages.Headers
+@inject UserService _userService
+@inject NavigationManager _navigation
+
+<CustomHeader>Novo Usuário</CustomHeader>
+
+<EditForm Model="@NewUser" OnValidSubmit="CreateUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="Name" class="form-label">Nome</label>
+        <InputText id="Name" class="form-control" @bind-Value="NewUser.Name" />
+        <ValidationMessage For="@(() => NewUser.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <InputText id="Email" class="form-control" @bind-Value="NewUser.Email" />
+        <ValidationMessage For="@(() => NewUser.Email)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Criar Usuário</button>
+    <button type="button" class="btn btn-secondary" @onclick="CancelCreate">Cancelar</button>
+</EditForm>
+
+@code {
+    private User NewUser { get; set; } = new User();
+
+    private async Task CreateUser()
+    {
+        await _userService.AddUserAsync(NewUser);
+        _navigation.NavigateTo("/users");
+    }
+
+    private void CancelCreate()
+    {
+        _navigation.NavigateTo("/users");
+    }
+}

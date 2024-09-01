@@ -1,0 +1,77 @@
+﻿@page "/loans/create"
+@rendermode InteractiveServer
+@using BlazorComponent.Components.Pages.Headers
+@inject LoanService _loanService
+@inject UserService _userService
+@inject NavigationManager _navigation
+
+<CustomHeader>Novo Empréstimo</CustomHeader>
+
+<EditForm Model="@NewLoan" OnValidSubmit="CreateLoan">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="UserId" class="form-label">Usuário</label>
+        <InputSelect id="UserId" class="form-select" @bind-Value="NewLoan.UserId">
+            <option value="">Selecione um usuário</option>
+            @if (Users != null)
+            {
+                @foreach (var user in Users)
+                {
+                    <option value="@user.Id">@user.Name</option>
+                }
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => NewLoan.UserId)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="BookId" class="form-label">Livro</label>
+        <InputSelect id="BookId" class="form-select" @bind-Value="NewLoan.BookId">
+            <option value="">Selecione um livro</option>
+            @if (AvailableBooks != null)
+            {
+                @foreach (var book in AvailableBooks)
+                {
+                    <option value="@book.Id">@book.Name</option>
+                }
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => NewLoan.BookId)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Criar Empréstimo</button>
+    <button type="button" class="btn btn-secondary" @onclick="CancelCreate">Cancelar</button>
+</EditForm>
+
+@code {
+    private Loan NewLoan { get; set; } = new Loan();
+    private List<User>? Users;
+    private List<Book>? AvailableBooks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await _userService.GetAllUsersAsync();
+        AvailableBooks = await _loanService.GetAvailableBooksAsync();
+    }
+
+    private async Task CreateLoan()
+    {
+        try
+        {
+            await _loanService.AddLoanAsync(NewLoan);
+            _navigation.NavigateTo("/loans");
+        }
+        catch (Exception ex)
+        {
+            // Aqui você pode adicionar lógica para exibir o erro para o usuário
+            Console.WriteLine($"Erro ao criar empréstimo: {ex.Message}");
+        }
+    }
+
+    private void CancelCreate()
+    {
+        _navigation.NavigateTo("/loans");
+    }
+}
